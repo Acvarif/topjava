@@ -8,7 +8,9 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserMealsUtil {
     public static void main(String[] args) {
@@ -27,8 +29,9 @@ public class UserMealsUtil {
 
         System.out.println("-------------");
 
-//        System.out.println(filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
-    }
+        System.out.println(filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
+
+}
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         // TODO return filtered list with excess. Implement by cycles
@@ -55,13 +58,23 @@ public class UserMealsUtil {
         // TODO Implement by streams
 
         List<UserMealWithExcess> userMealWithExcesses = new ArrayList<>();
-        boolean excess = false;
-        meals.stream()
+        boolean excess;
+        List<UserMeal> userMeals = meals.stream()
                 .filter(i -> i.getDateTime().getHour() >= startTime.getHour())
-                .filter(i -> i.getDateTime().getHour() < endTime.getHour());
+                .filter(i -> i.getDateTime().getHour() < endTime.getHour())
+                .collect(Collectors.toList());
 
-        userMealWithExcesses.add(meals, excess);
+        for (UserMeal userMeal : userMeals) {
+            if(userMeal.getCalories() > caloriesPerDay)
+                excess = true;
+            else
+                excess = false;
+
+            UserMealWithExcess userMealWithExcess = new UserMealWithExcess(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), excess);
+            userMealWithExcesses.add(userMealWithExcess);
+        }
 
         return userMealWithExcesses;
     }
+
 }
