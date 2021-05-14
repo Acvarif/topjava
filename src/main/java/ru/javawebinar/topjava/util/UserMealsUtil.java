@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.model.UserMealWithExcess;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,17 +25,43 @@ public class UserMealsUtil {
         List<UserMealWithExcess> mealsTo = filteredByCycles(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
         mealsTo.forEach(System.out::println);
 
+        System.out.println("-------------");
+
 //        System.out.println(filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
     }
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         // TODO return filtered list with excess. Implement by cycles
 
-        return null;
+        List<UserMealWithExcess> userMealWithExcesses = new ArrayList<>();
+        boolean excess;
+        for (UserMeal userMeal : meals) {
+            LocalDateTime dateTime = userMeal.getDateTime();
+            String description = userMeal.getDescription();
+            int calories = userMeal.getCalories();
+            if(userMeal.getCalories() > caloriesPerDay)
+               excess = true;
+            else
+               excess = false;
+            if(userMeal.getDateTime().getHour() >= startTime.getHour() && userMeal.getDateTime().getHour() < endTime.getHour()) {
+               UserMealWithExcess userMealWithExcess = new UserMealWithExcess(dateTime, description, calories, excess);
+               userMealWithExcesses.add(userMealWithExcess);
+            }
+        }
+        return userMealWithExcesses;
     }
 
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         // TODO Implement by streams
-        return null;
+
+        List<UserMealWithExcess> userMealWithExcesses = new ArrayList<>();
+        boolean excess = false;
+        meals.stream()
+                .filter(i -> i.getDateTime().getHour() >= startTime.getHour())
+                .filter(i -> i.getDateTime().getHour() < endTime.getHour());
+
+        userMealWithExcesses.add(meals, excess);
+
+        return userMealWithExcesses;
     }
 }
