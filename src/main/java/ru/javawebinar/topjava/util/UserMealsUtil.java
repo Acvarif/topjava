@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class UserMealsUtil {
 
@@ -96,6 +97,25 @@ public class UserMealsUtil {
                 .filter(i -> i.getDateTime().getDayOfYear() == 31)
                 .reduce(0, (partialResult, calorie) -> partialResult + calorie.getCalories(), Integer::sum);
         System.out.println("calories31stream " + calories31stream);
+
+        List<LocalDateTime> localDateTimes =  meals.stream()
+                .map(UserMeal::getDateTime)
+                .collect(Collectors.toList());
+        System.out.println("localDateTimes " + localDateTimes);
+
+//        List<LocalTime> localTimes = localDateTimes.stream()
+//                .map(d -> LocalTime.parse(d, filteredByStreams(LocalDateTime.of()) ))
+//                .collect(Collectors.toList());
+
+        List<String> des =  meals.stream()
+                .map(UserMeal::getDescription)
+                .collect(Collectors.toList());
+        System.out.println("des " + des);
+
+        List<Integer> cal =  meals.stream()
+                .map(UserMeal::getCalories)
+                .collect(Collectors.toList());
+        System.out.println("cal " + cal);
 
         List<UserMeal> userMeals = meals.stream()
                 .filter(i -> i.getDateTime().getHour() >= startTime.getHour())
