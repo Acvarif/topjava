@@ -136,19 +136,60 @@ public class UserMealsUtil {
                 .collect(Collectors.toList());
 //        System.out.println("userMeals " + userMeals);
 
-        boolean excess = false;
+        final boolean[] exces = {false};
         List<UserMealWithExcess> userMealWithExcesses = new ArrayList<>();
-        for (UserMeal userMeal : userMeals) {
+        List<UserMeal> flat = userMeals.stream()
+                .forEach(u -> {
+                    if(u.getCalories() > 2000) {
+                        exces[0] = true;
+                    }else {
+                        exces[0] = true;
+                    }
+                    userMealWithExcesses.stream()
+                            .map(e -> {
+                                e.
+                            })
+                });
 
-            /* entries between `startTime` and` endTime` with minutes */
-            if (userMeal.getDateTime().getDayOfMonth() == 30) {
-                excess = calories30stream > caloriesPerDay;
-            } else if (userMeal.getDateTime().getDayOfMonth() == 31) {
-                excess = calories31stream > caloriesPerDay;
-            }
-            UserMealWithExcess userMealWithExcess = new UserMealWithExcess(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), excess);
-            userMealWithExcesses.add(userMealWithExcess);
-        }
+
+        userMeals.forEach(u -> {
+//                sumCalories.entrySet()
+//                        // ...
+//                        .forEach(e -> {
+//                            if (u.getDateTime().toLocalDate().isEqual(e.getKey())) {
+//                                if (e.getValue() > caloriesPerDay) {
+//                                    exces[0] = true;
+//                                } else {
+//                                    exces[0] = false;
+//                                }
+//                            }
+//                        }
+                });
+
+        boolean excess = false;
+//        List<UserMealWithExcess> userMealWithExcesses = new ArrayList<>();
+
+//        for (UserMeal userMeal : userMeals) {
+//            LocalDateTime dateTime = userMeal.getDateTime().withMinute(userMeal.getDateTime().getMinute());
+//            String description = userMeal.getDescription();
+//
+//            for(Map.Entry<LocalDate, Integer> entry : sumCalories.entrySet()) {
+//                LocalDate key = entry.getKey();
+//                Integer value = entry.getValue();
+//                System.out.println("key " + key + " value " + value);
+//                if(userMeal.getDateTime().toLocalDate().isEqual(key)) {
+//                    System.out.println("key " + key + " value " + value);
+//                    if (value > caloriesPerDay) {
+//                        excess = true;
+//                    } else {
+//                        excess = false;
+//                    }
+//                }
+//            }
+//            System.out.println(excess);
+//            UserMealWithExcess userMealWithExcess = new UserMealWithExcess(dateTime, description, userMeal.getCalories(), excess);
+//            userMealWithExcesses.add(userMealWithExcess);
+//        }
 
 //----------------------------------------------------------------------------------------------------------------------
 
