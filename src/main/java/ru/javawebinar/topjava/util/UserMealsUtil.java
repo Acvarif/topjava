@@ -3,23 +3,29 @@ package ru.javawebinar.topjava.util;
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.model.UserMealWithExcess;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class UserMealsUtil {
     public static void main(String[] args) {
         List<UserMeal> meals = Arrays.asList(
+//                new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
+//                new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
+//                new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
+//                new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100),
+//                new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000),
+//                new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
+//                new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
+
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
+                new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000),
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100),
-                new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000),
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
         );
@@ -35,20 +41,19 @@ public class UserMealsUtil {
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
 
-        System.out.println("filteredByCycles ---");
-
-        /* total calories per day for days of month 30 and 31 */
-        int calories30 = 0;
-        int calories31 = 0;
+        /* HashMap LocalDate = sum calories*/
+        HashMap<LocalDate, Integer> hashMap =  new HashMap<>();
         for (UserMeal userMeal : meals) {
-            if (userMeal.getDateTime().getMonth() == Month.JANUARY && userMeal.getDateTime().getYear() == 2020) {
-                if (userMeal.getDateTime().getDayOfMonth() == 30) {
-                    calories30 = calories30 + userMeal.getCalories();
-                } else if (userMeal.getDateTime().getDayOfMonth() == 31) {
-                    calories31 = calories31 + userMeal.getCalories();
-                }
+            if (!hashMap.containsKey(userMeal.getDateTime().toLocalDate())) {
+                hashMap.put(userMeal.getDateTime().toLocalDate(), userMeal.getCalories());
+            } else {
+                hashMap.put(userMeal.getDateTime().toLocalDate(),
+                        hashMap.get(userMeal.getDateTime().toLocalDate()) + userMeal.getCalories());
             }
         }
+        System.out.println(hashMap);
+
+        System.out.println("filteredByCycles ---");
 
         boolean excess = true;
         List<UserMealWithExcess> userMealWithExcesses = new ArrayList<>();
@@ -58,18 +63,25 @@ public class UserMealsUtil {
 
             /* entries between `startTime` and` endTime` with minutes */
             if (TimeUtil.isBetweenHalfOpen(dateTime.toLocalTime(), startTime, endTime)) {
-                if (userMeal.getDateTime().getDayOfMonth() == 30) {
-                    System.out.println("calories30 " + calories30);
-                    System.out.println("calories31 " + calories31);
-                    excess = calories30 > caloriesPerDay;
-                } else if (userMeal.getDateTime().getDayOfMonth() == 31) {
-                    excess = calories31 > caloriesPerDay;
+                System.out.println(userMeal.getDateTime().toLocalDate());
+                for(Map.Entry<LocalDate, Integer> entry : hashMap.entrySet()) {
+                    LocalDate key = entry.getKey();
+                    Integer value = entry.getValue();
+                    System.out.println("key " + key + " value " + value);
+                    if(userMeal.getDateTime().toLocalDate().isEqual(key)) {
+                        System.out.println("key " + key + " value " + value);
+                        if (value > caloriesPerDay) {
+                            excess = true;
+                        } else {
+                            excess = false;
+                        }
+                    }
                 }
+                System.out.println(excess);
                 UserMealWithExcess userMealWithExcess = new UserMealWithExcess(dateTime, description, userMeal.getCalories(), excess);
                 userMealWithExcesses.add(userMealWithExcess);
             }
         }
-
         return userMealWithExcesses;
     }
 
@@ -95,8 +107,8 @@ public class UserMealsUtil {
                 .collect(Collectors.toList());
         System.out.println("cal " + cal);
 
-        Map<Object, Integer> sumCalories = meals.stream()
-                .collect(Collectors.groupingBy(meal -> meal.getDateTime().getDayOfMonth(),
+        Map<LocalDate, Integer> sumCalories = meals.stream()
+                .collect(Collectors.groupingBy(meal -> meal.getDateTime().toLocalDate(),
                         Collectors.summingInt(UserMeal::getCalories)));
         System.out.println("sumCalories " + sumCalories);
 
