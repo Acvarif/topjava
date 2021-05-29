@@ -123,13 +123,14 @@ public class UserMealsUtil {
         System.out.println("filteredByStreams ---");
 
         /* filter for List<UserMeal> between startTime, endTime */
-        List<UserMeal> userMeals = meals.stream()
-                .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime))
-                .collect(Collectors.toList());
+//        List<UserMeal> userMeals = meals.stream()
+//                .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime))
+//                .collect(Collectors.toList());
 //        System.out.println("userMeals " + userMeals);
 
         List<UserMealWithExcess> userMealWithExcesses = new ArrayList<>();
-        userMealWithExcesses = userMeals.stream()
+        userMealWithExcesses = meals.stream()
+                .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime))
                 .map((UserMeal userMeal) ->
                     new UserMealWithExcess(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(),
                             sumCalories.get(userMeal.getDateTime().toLocalDate()) > caloriesPerDay))
