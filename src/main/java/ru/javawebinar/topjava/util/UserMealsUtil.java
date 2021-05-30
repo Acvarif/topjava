@@ -137,6 +137,21 @@ public class UserMealsUtil {
                         .collect(Collectors.toList());
         System.out.println("userMealWithExcesses " + userMealWithExcesses);
 
+        meals.stream()
+                .collect(Collectors.groupingBy(UserMeal::getCalories))
+                .entrySet()
+                .forEach(System.out::println);
+
+        meals.stream()
+                .map(u -> u.getDateTime().getHour())
+                .distinct()
+                .forEach(System.out::println);
+
+        Map<LocalDateTime, Integer> sumCal =  meals.stream()
+                .collect(Collectors.toMap(u -> u.getDateTime(), UserMeal::getCalories));
+                System.out.println(sumCal);
+
+        System.out.println("--------------");
 //----------------------------------------------------------------------------------------------------------------------
 
         return userMealWithExcesses;
