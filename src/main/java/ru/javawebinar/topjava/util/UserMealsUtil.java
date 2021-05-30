@@ -45,13 +45,24 @@ public class UserMealsUtil {
         /* HashMap LocalDate = sum calories*/
         HashMap<LocalDate, Integer> hashMap =  new HashMap<>();
         for (UserMeal userMeal : meals) {
-            if (!hashMap.containsKey(userMeal.getDateTime().toLocalDate())) {
+            Integer sumCalories = hashMap.get(userMeal.getDateTime().toLocalDate());
+            if (sumCalories == null) {
                 hashMap.put(userMeal.getDateTime().toLocalDate(), userMeal.getCalories());
             } else {
                 hashMap.put(userMeal.getDateTime().toLocalDate(),
                         hashMap.get(userMeal.getDateTime().toLocalDate()) + userMeal.getCalories());
             }
         }
+
+//        for (UserMeal userMeal : meals) {
+//            int sumCalories = hashMap.get(userMeal.getDateTime().toLocalDate());
+//            if (!(sumCalories == 0)) {
+//                hashMap.put(userMeal.getDateTime().toLocalDate(), userMeal.getCalories());
+//            } else {
+//                hashMap.put(userMeal.getDateTime().toLocalDate(), sumCalories + userMeal.getCalories());
+//            }
+//        }
+
         System.out.println(hashMap);
 
         System.out.println("filteredByCycles ---");
