@@ -42,6 +42,7 @@ public class UserMealsUtil {
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
 
+        long tm = System.nanoTime();
         /* HashMap LocalDate = sum calories*/
         HashMap<LocalDate, Integer> hashMap =  new HashMap<>();
         for (UserMeal userMeal : meals) {
@@ -63,9 +64,9 @@ public class UserMealsUtil {
 //            }
 //        }
 
-        System.out.println(hashMap);
-
-        System.out.println("filteredByCycles ---");
+//        System.out.println(hashMap);
+//
+//        System.out.println("filteredByCycles ---");
 
         boolean excess = true;
         List<UserMealWithExcess> userMealWithExcesses = new ArrayList<>();
@@ -97,6 +98,10 @@ public class UserMealsUtil {
                 userMealWithExcesses.add(userMealWithExcess);
             }
         }
+
+        tm= System.nanoTime() - tm;
+        System.out.printf("Elapsed %,9.3f ms\n", tm/1_000_000.0);
+
         return userMealWithExcesses;
     }
 
@@ -122,11 +127,6 @@ public class UserMealsUtil {
                 .collect(Collectors.toList());
         System.out.println("cal " + cal);
 
-        Map<LocalDate, Integer> sumCalories = meals.stream()
-                .collect(Collectors.groupingBy(meal -> meal.getDateTime().toLocalDate(),
-                        Collectors.summingInt(UserMeal::getCalories)));
-        System.out.println("sumCalories " + sumCalories);
-
         System.out.println("End Stream Tests ---");
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -139,6 +139,12 @@ public class UserMealsUtil {
 //                .collect(Collectors.toList());
 //        System.out.println("userMeals " + userMeals);
 
+        long time = System.nanoTime();
+
+        Map<LocalDate, Integer> sumCalories = meals.stream()
+                .collect(Collectors.groupingBy(meal -> meal.getDateTime().toLocalDate(),
+                        Collectors.summingInt(UserMeal::getCalories)));
+
         List<UserMealWithExcess> userMealWithExcesses;
         userMealWithExcesses = meals.stream()
                 .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime))
@@ -146,6 +152,10 @@ public class UserMealsUtil {
                         userMeal.getCalories(),
                         sumCalories.get(userMeal.getDateTime().toLocalDate()) > caloriesPerDay))
                         .collect(Collectors.toList());
+        // Код, который нужно померить
+        time = System.nanoTime() - time;
+        System.out.printf("Elapsed %,9.3f ms\n", time/1_000_000.0);
+
         System.out.println("userMealWithExcesses " + userMealWithExcesses);
 
         meals.stream()
