@@ -37,7 +37,7 @@ public class UserMealsUtil {
 //----------------------------------------------------------------------------------------------------------------------
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        HashMap<LocalDate, Integer> hashMapSumCalories =  new HashMap<>();
+        Map<LocalDate, Integer> hashMapSumCalories =  new HashMap<>();
         for (UserMeal userMeal : meals) {
             hashMapSumCalories.merge(userMeal.getDateTime().toLocalDate(), userMeal.getCalories(), (a, b) -> a + b);
         }
