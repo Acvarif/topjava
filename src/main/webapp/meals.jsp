@@ -39,15 +39,7 @@
         </thead>
         <tbody>
         <c:forEach items="${meals}" var="meal">
-            <c:choose>
-                <c:when test="${meal.excess}">
-                    <c:set var = "color" value = "red"/>
-                </c:when>
-                <c:otherwise>
-                    <c:set var = "color" value = "green"/>
-                </c:otherwise>
-            </c:choose>
-            <tr style="color: ${color}">
+            <tr style="color: ${meal.excess ? 'red' : 'green'}">
                 <td>
                     ${meal.dateTime}
                 </td>
