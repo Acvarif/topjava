@@ -16,6 +16,8 @@
 <body>
 <h3><a href="index.html">Home</a></h3>
 <hr>
+<p><a href="MealServlet?action=insert">Add Meal</a></p>
+<hr>
 <h2>Meals</h2>
     <table >
         <thead>

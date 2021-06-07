@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -56,5 +55,10 @@ public class MealServlet extends HttpServlet {
 
         request.getRequestDispatcher("/meals.jsp").forward(request, response);
 //        response.sendRedirect("meals.jsp");
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        Meal meal = new Meal();
+
     }
 }
