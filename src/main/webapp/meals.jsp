@@ -50,7 +50,7 @@
             <%--</c:choose>--%>
             <tr style="color: ${color}">
                 <td>
-                    ${meal.dateTime}
+                    ${meal.dateTime.toString().replace("T", " ")}
                 </td>
                 <td>
                     ${meal.description}
