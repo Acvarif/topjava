@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.web;
 import org.slf4j.Logger;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
+import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
 
@@ -29,10 +31,10 @@ public class MealServlet extends HttpServlet {
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
     );
 
-    private static int caloriesPerDay;
+    private static int CALORIES_PER_DAY;
 
     static {
-        caloriesPerDay = 2000;
+        CALORIES_PER_DAY = 2000;
     }
 
     @Override
@@ -42,14 +44,16 @@ public class MealServlet extends HttpServlet {
         final Map<LocalDate, Integer> caloriesSumByDate = new HashMap<>();
         meals.forEach(meal -> caloriesSumByDate.merge(meal.getDate(), meal.getCalories(), Integer::sum));
 
-        List<MealTo> mealTos = new ArrayList<>();
-        for (Meal meal : meals) {
-            MealTo mealTo = new MealTo(meal.getDateTime(), meal.getDescription(),
-                    meal.getCalories(),
-                    caloriesSumByDate.get(meal.getDateTime().
-                            toLocalDate()) > caloriesPerDay);
-            mealTos.add(mealTo);
-        }
+//        List<MealTo> mealTos = new ArrayList<>();
+//        for (Meal meal : meals) {
+//            MealTo mealTo = new MealTo(meal.getDateTime(), meal.getDescription(),
+//                    meal.getCalories(),
+//                    caloriesSumByDate.get(meal.getDateTime().
+//                            toLocalDate()) > caloriesPerDay);
+//            mealTos.add(mealTo);
+//        }
+
+        List<MealTo> mealTos = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY);
 
         request.setAttribute("meals", mealTos);
 
