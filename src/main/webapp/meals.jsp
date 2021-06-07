@@ -41,7 +41,7 @@
         <c:forEach items="${meals}" var="meal">
             <tr style="color: ${meal.excess ? 'red' : 'green'}">
                 <td>
-                    ${meal.dateTime}
+                    ${meal.dateTime.toString().replace("T", " ")}
                 </td>
                 <td>
                     ${meal.description}
