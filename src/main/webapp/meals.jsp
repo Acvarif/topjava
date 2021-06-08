@@ -16,6 +16,7 @@
 <body>
 <h3><a href="index.html">Home</a></h3>
 <hr>
+<p><a href="meals?action=create">Add Meal</a></p>
 <h2>Meals</h2>
     <table >
         <thead>
