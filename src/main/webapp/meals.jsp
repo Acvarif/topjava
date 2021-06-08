@@ -50,10 +50,10 @@
                     ${meal.calories}
                 </td>
                 <td>
-
+                    <a href="meals?action=update&id=${meal.id}">Update</a>
                 </td>
                 <td>
-
+                    <a href="meals?action=delete&id=${meal.id}">Delete</a>
                 </td>
             </tr>
         </c:forEach>
