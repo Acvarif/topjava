@@ -19,6 +19,7 @@
 <p><a href="MealServlet?action=insert">Add Meal</a></p>
 <hr>
 <h2>Meals</h2>
+${name}
     <table >
         <thead>
         <tr>

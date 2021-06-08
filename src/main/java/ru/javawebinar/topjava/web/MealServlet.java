@@ -44,18 +44,19 @@ public class MealServlet extends HttpServlet {
         final Map<LocalDate, Integer> caloriesSumByDate = new HashMap<>();
         meals.forEach(meal -> caloriesSumByDate.merge(meal.getDate(), meal.getCalories(), Integer::sum));
 
-//        List<MealTo> mealTos = new ArrayList<>();
-//        for (Meal meal : meals) {
-//            MealTo mealTo = new MealTo(meal.getDateTime(), meal.getDescription(),
-//                    meal.getCalories(),
-//                    caloriesSumByDate.get(meal.getDateTime().
-//                            toLocalDate()) > caloriesPerDay);
-//            mealTos.add(mealTo);
-//        }
+        List<MealTo> mealTos = new ArrayList<>();
+        for (Meal meal : meals) {
+            MealTo mealTo = new MealTo(meal.getDateTime(), meal.getDescription(),
+                    meal.getCalories(),
+                    caloriesSumByDate.get(meal.getDateTime().
+                            toLocalDate()) > CALORIES_PER_DAY);
+            mealTos.add(mealTo);
+        }
 
-        List<MealTo> mealTos = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY);
+//        List<MealTo> mealTos = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY);
 
         request.setAttribute("meals", mealTos);
+        request.setAttribute("name", "Devcolibri");
 
         request.getRequestDispatcher("/meals.jsp").forward(request, response);
 //        response.sendRedirect("meals.jsp");
