@@ -25,7 +25,7 @@ public class MealServlet extends HttpServlet {
 
     private static final int CALORIES_PER_DAY = 2000;
 
-    private AtomicInteger mealAtomicId = new AtomicInteger(7);
+    private AtomicInteger mealAtomicId = new AtomicInteger(0);
 
     private MealDao mealDao = new MealDao() {
         @Override
@@ -36,6 +36,7 @@ public class MealServlet extends HttpServlet {
 
         @Override
         public void updateMeal(Integer id, Meal meal) {
+            meal.setId(id);
             MealDb.getMealMap().put(id, meal);
         }
 
@@ -55,7 +56,6 @@ public class MealServlet extends HttpServlet {
         log.debug("forward to meals");
 
         String action = request.getParameter("action");
-        System.out.println(action);
 
         if (action == null) {
             List<MealTo> mealTos = MealsUtil.filteredByStreams(mealDao.getMealList(), LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY);
@@ -80,7 +80,9 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        log.debug("doPost for create and update");
         request.setCharacterEncoding("UTF-8");
+
         String action = request.getParameter("action");
 
         if (action.equals("create")) {
@@ -90,7 +92,8 @@ public class MealServlet extends HttpServlet {
             response.sendRedirect("/meals");
 
         } else if (action.equals("update")) {
-            mealDao.updateMeal(Integer.parseInt(request.getParameter("id")), new Meal(LocalDateTime.parse(request.getParameter("date")),
+            mealDao.updateMeal(Integer.parseInt(request.getParameter("id")),
+                    new Meal(LocalDateTime.parse(request.getParameter("date")),
                     request.getParameter("description"),
                     Integer.parseInt(request.getParameter("calories"))));
             response.sendRedirect("/meals");
