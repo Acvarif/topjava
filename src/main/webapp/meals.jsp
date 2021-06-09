@@ -16,10 +16,8 @@
 <body>
 <h3><a href="index.html">Home</a></h3>
 <hr>
-<p><a href="MealServlet?action=insert">Add Meal</a></p>
-<hr>
+<p><a href="meals?action=create">Add Meal</a></p>
 <h2>Meals</h2>
-${name}
     <table >
         <thead>
         <tr>
@@ -42,16 +40,7 @@ ${name}
         </thead>
         <tbody>
         <c:forEach items="${meals}" var="meal">
-            <c:set var="color" value="${(meal.excess) ? 'red' : 'green'}" />
-            <%--<c:choose>--%>
-                <%--<c:when test="${meal.excess}">--%>
-                    <%--<c:set var = "color" value = "red"/>--%>
-                <%--</c:when>--%>
-                <%--<c:otherwise>--%>
-                    <%--<c:set var = "color" value = "green"/>--%>
-                <%--</c:otherwise>--%>
-            <%--</c:choose>--%>
-            <tr style="color: ${color}">
+            <tr style="color: ${meal.excess ? 'red' : 'green'}">
                 <td>
                     ${meal.dateTime.toString().replace("T", " ")}
                 </td>
@@ -62,10 +51,10 @@ ${name}
                     ${meal.calories}
                 </td>
                 <td>
-
+                    <a href="meals?action=update&id=${meal.id}">Update</a>
                 </td>
                 <td>
-
+                    <a href="meals?action=delete&id=${meal.id}">Delete</a>
                 </td>
             </tr>
         </c:forEach>
