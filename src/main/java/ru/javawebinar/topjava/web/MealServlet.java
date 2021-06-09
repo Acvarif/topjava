@@ -63,13 +63,11 @@ public class MealServlet extends HttpServlet {
             request.getRequestDispatcher("/meals.jsp").forward(request, response);
         } else if (action.equals("create")) {
             request.getRequestDispatcher("create.jsp").forward(request, response);
-            request.getRequestDispatcher("/meals.jsp").forward(request, response);
         } else if (action.equals("update")) {
             Integer id = Integer.parseInt(request.getParameter("id"));
             Meal meal = MealDb.getMealMap().get(id);
             request.setAttribute("meal", meal);
             request.getRequestDispatcher("update.jsp").forward(request, response);
-            request.getRequestDispatcher("/meals.jsp").forward(request, response);
         } else if (action.equals("delete")) {
             Integer id = Integer.parseInt(request.getParameter("id"));
             Meal meal = MealDb.getMealMap().get(id);
