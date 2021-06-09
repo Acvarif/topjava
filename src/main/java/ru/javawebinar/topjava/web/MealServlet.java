@@ -60,22 +60,22 @@ public class MealServlet extends HttpServlet {
         if (action == null) {
             List<MealTo> mealTos = MealsUtil.filteredByStreams(mealDao.getMealList(), LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY);
             request.setAttribute("meals", mealTos);
+            request.getRequestDispatcher("/meals.jsp").forward(request, response);
         } else if (action.equals("create")) {
             request.getRequestDispatcher("create.jsp").forward(request, response);
+            request.getRequestDispatcher("/meals.jsp").forward(request, response);
         } else if (action.equals("update")) {
             Integer id = Integer.parseInt(request.getParameter("id"));
             Meal meal = MealDb.getMealMap().get(id);
             request.setAttribute("meal", meal);
             request.getRequestDispatcher("update.jsp").forward(request, response);
+            request.getRequestDispatcher("/meals.jsp").forward(request, response);
         } else if (action.equals("delete")) {
             Integer id = Integer.parseInt(request.getParameter("id"));
             Meal meal = MealDb.getMealMap().get(id);
             mealDao.deleteMeal(meal);
-            List<MealTo> mealTos = MealsUtil.filteredByStreams(mealDao.getMealList(), LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY);
-            request.setAttribute("meals", mealTos);
+            response.sendRedirect("/meals");
         }
-
-        request.getRequestDispatcher("/meals.jsp").forward(request, response);
     }
 
     @Override
@@ -90,7 +90,6 @@ public class MealServlet extends HttpServlet {
                     request.getParameter("description"),
                     Integer.parseInt(request.getParameter("calories"))));
             response.sendRedirect("/meals");
-
         } else if (action.equals("update")) {
             mealDao.updateMeal(Integer.parseInt(request.getParameter("id")),
                     new Meal(LocalDateTime.parse(request.getParameter("date")),
