@@ -7,8 +7,8 @@
 </head>
 <body>
 
-<form method="POST" action='meals'>
-    <%--<input type="hidden" name="id"  value="<c:out value="${meal.id}" />" /> <br />--%>
+<form method="POST" action='meals?action=update'>
+    <input name="id" type="hidden" value="${meal.id}">
     Date : <input type="datetime-local" name="date" value="<c:out value="${meal.dateTime}" />" /> <br />
     Description : <input type="text" name="description" value="<c:out value="${meal.description}" />" /> <br />
     Calories : <input type="text" name="calories" value="<c:out value="${meal.calories}" />" /> <br />
