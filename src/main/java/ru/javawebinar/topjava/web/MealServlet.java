@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import ru.javawebinar.topjava.dao.MealDao;
+import ru.javawebinar.topjava.dao.impl.MealDaoImpl;
 import ru.javawebinar.topjava.db.MealDb;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
@@ -25,33 +26,35 @@ public class MealServlet extends HttpServlet {
 
     private static final int CALORIES_PER_DAY = 2000;
 
-    private AtomicInteger mealAtomicId = new AtomicInteger(0);
+//    private AtomicInteger mealAtomicId = new AtomicInteger(0);
 
-    private MealDao mealDao = new MealDao() {
-        @Override
-        public void create(Meal meal) {
-//            meal.setId(mealAtomicId.incrementAndGet());
+//    private MealDao mealDao = new MealDao() {
+//        @Override
+//        public void create(Meal meal) {
+////            meal.setId(mealAtomicId.incrementAndGet());
+////            MealDb.getMealMap().put(meal.getId(), meal);
+//            meal.setId(mealAtomicId.addAndGet(1));
+//            MealDb.getMealMap().put(mealAtomicId.get(), meal);
+//        }
+//
+//        @Override
+//        public void update(int id, Meal meal) {
+//            meal.setId(id);
 //            MealDb.getMealMap().put(meal.getId(), meal);
-            meal.setId(mealAtomicId.addAndGet(1));
-            MealDb.getMealMap().put(mealAtomicId.get(), meal);
-        }
+//        }
+//
+//        @Override
+//        public void delete(int id) {
+//            MealDb.getMealMap().remove(id);
+//        }
+//
+//        @Override
+//        public List<Meal> getList() {
+//            return new ArrayList<Meal>(MealDb.getMealMap().values());
+//        }
+//    };
 
-        @Override
-        public void update(int id, Meal meal) {
-            meal.setId(id);
-            MealDb.getMealMap().put(meal.getId(), meal);
-        }
-
-        @Override
-        public void delete(int id) {
-            MealDb.getMealMap().remove(id);
-        }
-
-        @Override
-        public List<Meal> getList() {
-            return new ArrayList<Meal>(MealDb.getMealMap().values());
-        }
-    };
+    private MealDaoImpl mealDao = new MealDaoImpl();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
