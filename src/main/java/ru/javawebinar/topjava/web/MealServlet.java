@@ -1,59 +1,101 @@
 package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
+import ru.javawebinar.topjava.dao.MealDao;
+import ru.javawebinar.topjava.db.MealDb;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
+import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.*;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
 
-    private List<Meal> meals = Arrays.asList(
-            new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
-            new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
-            new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
-            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100),
-            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000),
-            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
-            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
-    );
+    private static final int CALORIES_PER_DAY = 2000;
 
-    private static int caloriesPerDay;
+    private AtomicInteger mealAtomicId = new AtomicInteger(0);
 
-    static {
-        caloriesPerDay = 2000;
-    }
+    private MealDao mealDao = new MealDao() {
+        @Override
+        public void createMeal(Meal meal) {
+            meal.setId(mealAtomicId.incrementAndGet());
+            MealDb.getMealMap().put(mealAtomicId.get(), meal);
+        }
+
+        @Override
+        public void updateMeal(Integer id, Meal meal) {
+            meal.setId(id);
+            MealDb.getMealMap().put(id, meal);
+        }
+
+        @Override
+        public void deleteMeal(Meal meal) {
+            MealDb.getMealMap().remove(meal.getId());
+        }
+
+        @Override
+        public List<Meal> getMealList() {
+            return new ArrayList<Meal>(MealDb.getMealMap().values());
+        }
+    };
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        log.debug("redirect to meals");
+        log.debug("forward to meals");
 
-        final Map<LocalDate, Integer> caloriesSumByDate = new HashMap<>();
-        meals.forEach(meal -> caloriesSumByDate.merge(meal.getDate(), meal.getCalories(), Integer::sum));
+        String action = request.getParameter("action");
 
-        List<MealTo> mealTos = new ArrayList<>();
-        for (Meal meal : meals) {
-            MealTo mealTo = new MealTo(meal.getDateTime(), meal.getDescription(),
-                    meal.getCalories(),
-                    caloriesSumByDate.get(meal.getDateTime().
-                            toLocalDate()) > caloriesPerDay);
-            mealTos.add(mealTo);
+        if (action == null) {
+            List<MealTo> mealTos = MealsUtil.filteredByStreams(mealDao.getMealList(), LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY);
+            request.setAttribute("meals", mealTos);
+            request.getRequestDispatcher("/meals.jsp").forward(request, response);
+        } else if (action.equals("create")) {
+            request.getRequestDispatcher("create.jsp").forward(request, response);
+//            request.getRequestDispatcher("/meals.jsp").forward(request, response);
+        } else if (action.equals("update")) {
+            Integer id = Integer.parseInt(request.getParameter("id"));
+            Meal meal = MealDb.getMealMap().get(id);
+            request.setAttribute("meal", meal);
+            request.getRequestDispatcher("update.jsp").forward(request, response);
+//            request.getRequestDispatcher("/meals.jsp").forward(request, response);
+        } else if (action.equals("delete")) {
+            Integer id = Integer.parseInt(request.getParameter("id"));
+            Meal meal = MealDb.getMealMap().get(id);
+            mealDao.deleteMeal(meal);
+            response.sendRedirect("/meals");
         }
+    }
 
-        request.setAttribute("meals", mealTos);
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        log.debug("doPost for create and update");
+        request.setCharacterEncoding("UTF-8");
 
-        request.getRequestDispatcher("/meals.jsp").forward(request, response);
-//        response.sendRedirect("meals.jsp");
+        String action = request.getParameter("action");
+
+        if (action.equals("create")) {
+            mealDao.createMeal(new Meal(LocalDateTime.parse(request.getParameter("date")),
+                    request.getParameter("description"),
+                    Integer.parseInt(request.getParameter("calories"))));
+            response.sendRedirect("/meals");
+        } else if (action.equals("update")) {
+            mealDao.updateMeal(Integer.parseInt(request.getParameter("id")),
+                    new Meal(LocalDateTime.parse(request.getParameter("date")),
+                    request.getParameter("description"),
+                    Integer.parseInt(request.getParameter("calories"))));
+            response.sendRedirect("/meals");
+        }
     }
 }
