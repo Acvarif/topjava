@@ -41,7 +41,7 @@ public class UserServlet extends HttpServlet {
             case "create":
             case "update":
                 final User user = "create".equals(action) ?
-                        new User(userRepository.getAll()) :
+                        new User(id, "", "", "") :
                         userRepository.get(getId(request));
                 request.setAttribute("user", user);
                 request.getRequestDispatcher("/userForm.jsp").forward(request, response);
