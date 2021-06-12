@@ -21,20 +21,15 @@ public class UserServlet extends HttpServlet {
 
     private UserDaoImpl userDao = new UserDaoImpl();
 
-    public static List<UserTo> listUsersTo(List<User> users) {
-
-        return new User(userDao.getList());
-    }
-
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("redirect to users");
 
         String action = request.getParameter("action");
 
         if (action == null) {
-            List<User> users = userDao.getList();
-//            List<UserTo> userTos = ;
-            request.setAttribute("users", userTos);
+//            List<User> users = userDao.getList();
+            List<UserTo> userTos = new User();
+            request.setAttribute("users", users);
             request.getRequestDispatcher("/user/users.jsp").forward(request, response);
         } else if (action.equals("create")) {
             request.getRequestDispatcher("/user/create.jsp").forward(request, response);
