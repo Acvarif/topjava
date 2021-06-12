@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import ru.javawebinar.topjava.dao.impl.MealDaoImpl;
 import ru.javawebinar.topjava.db.MealDb;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.MealTo;
+import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.servlet.ServletException;
@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Month;
 import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -24,6 +25,16 @@ public class MealServlet extends HttpServlet {
     private static final int CALORIES_PER_DAY = 2000;
 
     private MealDaoImpl mealDao = new MealDaoImpl();
+
+    {
+        mealDao.create(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
+        mealDao.create(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000));
+        mealDao.create(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500));
+        mealDao.create(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100));
+        mealDao.create(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
+        mealDao.create(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
+        mealDao.create(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -36,16 +47,16 @@ public class MealServlet extends HttpServlet {
             request.setAttribute("meals", mealTos);
             request.getRequestDispatcher("/meal/meals.jsp").forward(request, response);
         } else if (action.equals("create")) {
-            request.getRequestDispatcher("/mealcreate.jsp").forward(request, response);
+            request.getRequestDispatcher("/meal/create.jsp").forward(request, response);
         } else if (action.equals("update")) {
             Integer id = Integer.parseInt(request.getParameter("id"));
             Meal meal = MealDb.getMealMap().get(id);
             request.setAttribute("meal", meal);
-            request.getRequestDispatcher("/mealupdate.jsp").forward(request, response);
+            request.getRequestDispatcher("/meal/update.jsp").forward(request, response);
         } else if (action.equals("delete")) {
             int id = Integer.parseInt(request.getParameter("id"));
             mealDao.delete(id);
-            response.sendRedirect("/meal/meals");
+            response.sendRedirect("/meals");
         }
     }
 
@@ -60,13 +71,13 @@ public class MealServlet extends HttpServlet {
             mealDao.create(new Meal(LocalDateTime.parse(request.getParameter("date")),
                     request.getParameter("description"),
                     Integer.parseInt(request.getParameter("calories"))));
-            response.sendRedirect("/meal/meals");
+            response.sendRedirect("/meals");
         } else if (action.equals("update")) {
             mealDao.update(Integer.parseInt(request.getParameter("id")),
                     new Meal(LocalDateTime.parse(request.getParameter("date")),
                             request.getParameter("description"),
                             Integer.parseInt(request.getParameter("calories"))));
-            response.sendRedirect("/meal/meals");
+            response.sendRedirect("/meals");
         }
     }
 }
