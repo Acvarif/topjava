@@ -7,5 +7,6 @@
 <h3><a href="index.html">Home</a></h3>
 <hr>
 <h2>Users</h2>
+<a href="users?action=create">Add User</a>
 </body>
 </html>

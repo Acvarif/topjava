@@ -32,30 +32,55 @@ public class UserServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         switch (action == null ? "all" : action) {
+            case "create":
+                request.getRequestDispatcher("userCreate.jsp").forward(request, response);
+                break;
+            case "update":
+//                final User user = "create".equals(action) ?
+//                        new User(id, "", "", "") :
+//                        userRepository.get(getId(request));
+//                request.setAttribute("user", user);
+//                request.getRequestDispatcher("/userCreate.jsp").forward(request, response);
+//                break;
+//            case "all":
             case "delete":
                 int id = getId(request);
                 log.info("Delete {}", id);
                 userRepository.delete(id);
                 response.sendRedirect("users");
                 break;
-            case "create":
-            case "update":
-                final User user = "create".equals(action) ?
-                        new User(id, "", "", "") :
-                        userRepository.get(getId(request));
-                request.setAttribute("user", user);
-                request.getRequestDispatcher("/userForm.jsp").forward(request, response);
+            default:
+                log.info("getAll");
+                request.setAttribute("users", userRepository.getAll());
+                request.getRequestDispatcher("/users.jsp").forward(request, response);
                 break;
-//            case "all":
-//            default:
-//                log.info("getAll");
-//                request.setAttribute("users",
-//                        UserUtil.getTos(userRepository.getAll(), MealsUtil.DEFAULT_CALORIES_PER_DAY));
-//                request.getRequestDispatcher("/users.jsp").forward(request, response);
-//                break;
         }
 
 //        request.getRequestDispatcher("/users.jsp").forward(request, response);
+    }
+
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        log.debug("doPost for create and update");
+        request.setCharacterEncoding("UTF-8");
+
+        String action = request.getParameter("action");
+
+        if (action.equals("create")) {
+            userRepository.create(new User(request.getParameter("name"),
+                    request.getParameter("email"),
+                    request.getParameter("password"),
+                    Integer.parseInt(request.getParameter("calories"))
+            ));
+            response.sendRedirect("/users");
+        } else if (action.equals("update")) {
+//            mealDao.update(Integer.parseInt(request.getParameter("id")),
+//                    new Meal(LocalDateTime.parse(request.getParameter("date")),
+//                            request.getParameter("description"),
+//                            Integer.parseInt(request.getParameter("calories"))));
+//            response.sendRedirect("/meals");
+        }
     }
 
     private int getId(HttpServletRequest request) {

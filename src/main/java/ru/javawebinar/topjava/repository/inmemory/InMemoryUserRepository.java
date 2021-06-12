@@ -8,10 +8,24 @@ import ru.javawebinar.topjava.repository.UserRepository;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 public class InMemoryUserRepository implements UserRepository {
     private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepository.class);
+    private final Map<Integer, User> userRepository = new ConcurrentHashMap<>();
+    private final AtomicInteger userAtomicId = new AtomicInteger(0);
+
+    @Override
+    public void create(User user) {
+        /* trhreade safe */
+        synchronized(user) {
+            user.setId(userAtomicId.incrementAndGet());
+            userRepository.put(user.getId(), user);
+        }
+    }
 
     @Override
     public boolean delete(int id) {
