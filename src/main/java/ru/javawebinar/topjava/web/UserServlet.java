@@ -27,8 +27,8 @@ public class UserServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if (action == null) {
-//            List<User> users = userDao.getList();
-            List<UserTo> userTos = new User();
+            List<User> users = userDao.getList();
+//            List<UserTo> userTos = new User();
             request.setAttribute("users", users);
             request.getRequestDispatcher("/user/users.jsp").forward(request, response);
         } else if (action.equals("create")) {
