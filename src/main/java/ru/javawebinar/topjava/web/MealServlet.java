@@ -12,7 +12,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
@@ -46,6 +48,14 @@ public class MealServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         switch (action == null ? "all" : action) {
+            case "filter":
+                request.setAttribute("meals", MealsUtil.getFilteredAllTos(repository.getAll(),
+                        MealsUtil.DEFAULT_CALORIES_PER_DAY,
+                        LocalDate.parse(request.getParameter("fromDate")),
+                        LocalDate.parse(request.getParameter("toDate")),
+                        LocalTime.parse(request.getParameter("fromTime")),
+                        LocalTime.parse(request.getParameter("toTime"))));
+                request.getRequestDispatcher("/meals.jsp").forward(request, response);
             case "delete":
                 int id = getId(request);
                 log.info("Delete {}", id);

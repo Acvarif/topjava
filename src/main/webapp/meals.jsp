@@ -14,6 +14,10 @@
         .excess {
             color: red;
         }
+
+        .btn {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -21,6 +25,24 @@
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
+    <form method="GET" action='meals'>
+        <input type="hidden" name="action" value="filter">
+        <table border="1" cellpadding="8" cellspacing="0">
+            <tr>
+                <td>From date</td>
+                <td>To date</td>
+                <td>From time</td>
+                <td>To time</td>
+            </tr>
+            <tr>
+                <td><input type="date" name="fromDate" value=""></td>
+                <td><input type="date" name="toDate" value=""></td>
+                <td><input type="time" name="fromTime" value=""></td>
+                <td><input type="time" name="toTime" value=""></td>
+            </tr>
+        </table>
+        <button type="submit" class="btn">Filter</button>
+    </form>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
