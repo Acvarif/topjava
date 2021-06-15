@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.inmemory.InMemoryMealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -28,6 +29,8 @@ public class MealServlet extends HttpServlet {
     public void init() {
         repository = new InMemoryMealRepository();
     }
+
+    private MealRestController mealRestController;
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -75,8 +78,9 @@ public class MealServlet extends HttpServlet {
             default:
                 log.info("getAll");
                 Collection<Meal> meals = repository.getAll();
-                request.setAttribute("meals",
-                        MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY));
+//                request.setAttribute("meals",
+//                        MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY));
+                request.setAttribute("meals", mealRestController.getAll());
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
