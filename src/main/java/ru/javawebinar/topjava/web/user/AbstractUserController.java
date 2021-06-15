@@ -29,7 +29,7 @@ public abstract class AbstractUserController {
 
     public User create(User user) {
         log.info("create {}", user);
-//        checkNew(user);
+        checkNew(user);
         return service.create(user);
     }
 
@@ -40,7 +40,7 @@ public abstract class AbstractUserController {
 
     public void update(User user, int id) {
         log.info("update {} with id={}", user, id);
-//        assureIdConsistent(user, id);
+        assureIdConsistent(user, id);
         service.update(user);
     }
 
