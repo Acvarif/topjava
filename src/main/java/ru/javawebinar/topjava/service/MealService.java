@@ -1,38 +1,41 @@
 package ru.javawebinar.topjava.service;
 
+import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
+@Service
 public class MealService {
 
-    private MealRepository repository;
+    private MealRepository mealRepository;
 
-    public MealService(MealRepository repository) {
-        this.repository = repository;
+    public MealService(MealRepository mealRepository) {
+        this.mealRepository = mealRepository;
     }
 
     public Meal create(Meal meal) {
-        return repository.save(meal);
+        return mealRepository.save(meal);
     }
 
     public void delete(int id) {
-        checkNotFoundWithId(repository.delete(id), id);
+        checkNotFoundWithId(mealRepository.delete(id), id);
     }
 
     public Meal get(int id) {
-        return checkNotFoundWithId(repository.get(id), id);
+        return checkNotFoundWithId(mealRepository.get(id), id);
     }
 
-    public List<Meal> getAll() {
-        return new ArrayList<>(repository.getAll());
+    public Collection<Meal> getAll() {
+        return  mealRepository.getAll();
     }
 
     public void update(Meal meal) {
-        checkNotFoundWithId(repository.save(meal), meal.getId());
+        checkNotFoundWithId(mealRepository.save(meal), meal.getId());
     }
 }
