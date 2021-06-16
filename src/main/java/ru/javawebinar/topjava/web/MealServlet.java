@@ -6,7 +6,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.inmemory.InMemoryMealRepository;
-import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
@@ -27,7 +26,7 @@ public class MealServlet extends HttpServlet {
 
     private MealRepository mealRepository;
     private ClassPathXmlApplicationContext applicationContext;
-    private MealRestController  mealRestController;
+    private MealRestController mealRestController;
 
     @Override
     public void init() {
