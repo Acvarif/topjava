@@ -1,78 +1,73 @@
 package ru.javawebinar.topjava.repository.jdbc;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.util.DbUtil;
+import ru.javawebinar.topjava.util.MealRowMapper;
 
-import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class JdbcMealRepository implements MealRepository {
 
-    private final Connection connection;
+    private JdbcTemplate jdbcTemplate;
+    private SimpleJdbcInsert simpleJdbcInsert;
 
     @Autowired
-    public JdbcMealRepository() {
-        connection = DbUtil.getConnection();
+    public JdbcMealRepository(JdbcTemplate jdbcTemplate) {
+        this.simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("meals").usingGeneratedKeyColumns("id");
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public Meal save(Meal meal, int userId) {
-        try {
-            PreparedStatement preparedStatement = connection
-                    .prepareStatement("insert into meals(dateTime, description, calories) values (?, ?, ? )");
-            // Parameters start with 1
-//            preparedStatement.setTimestamp(1, meal.getDateTime().toString());
-            preparedStatement.setString(2, meal.getDescription());
-//            preparedStatement.setDate(3, new java.sql.Date(user.getDob().getTime()));
-            preparedStatement.setInt(3, meal.getCalories());
-//            preparedStatement.executeUpdate();
-            int row = preparedStatement.executeUpdate();
-            System.out.println(row);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (meal.isNew()) {
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("id", meal.getId());
+            parameters.put("dateTime", meal.getDateTime());
+            parameters.put("description", meal.getDescription());
+            parameters.put("calories", meal.getCalories());
+            Number id = simpleJdbcInsert.executeAndReturnKey(parameters);
+            meal.setId(id.intValue());
+            return meal;
+        } else {
+            Number id = jdbcTemplate.update("INSERT INTO meals(dateTime, description, calories) VALUES(?,?,?)",
+                    meal.getDateTime(), meal.getDescription(), meal.getCalories());
+            meal.setId(id.intValue());
+            return meal;
         }
-
-        return null;
     }
 
     @Override
     public boolean delete(int id, int userId) {
-        return false;
+        String sql = "DELETE FROM meals WHERE id = ?";
+        Object[] args = new Object[]{id};
+        return jdbcTemplate.update(sql, args) == 1;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        return null;
+        List<Meal> meals = jdbcTemplate.query("SELECT * FROM meals WHERE id=?", new MealRowMapper(), id);
+        return DataAccessUtils.singleResult(meals);
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        List<Meal> meals = new ArrayList<>();
-
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("select * from meals");
-            while (rs.next()) {
-                Meal meal = new Meal(rs.getInt("id"),
-                        rs.getTimestamp("dateTime").toLocalDateTime(),
-                        rs.getString("description"), rs.getInt("calories"));
-                meals.add(meal);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        List<Meal> meals = jdbcTemplate.query("SELECT * FROM meals", new MealRowMapper());
         return meals;
     }
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        return null;
+        return jdbcTemplate.query(
+                "SELECT * FROM meals AND datetime>=? AND datetime<? ORDER BY datetime DESC",
+                new MealRowMapper(), startDateTime, endDateTime);
     }
 }
