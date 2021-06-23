@@ -11,7 +11,9 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class JdbcMealRepository implements MealRepository {
@@ -40,8 +42,14 @@ public class JdbcMealRepository implements MealRepository {
     @Override
     public Meal save(Meal meal, int userId) {
         if (meal.isNew()) {
-            Number id = jdbcTemplate.update("INSERT INTO meals VALUES(1,?,?,?)",
-                    meal.getDateTime(), meal.getDescription(), meal.getCalories());
+//            Number id = jdbcTemplate.update("INSERT INTO meals VALUES(1,?,?,?)",
+//                    meal.getDateTime(), meal.getDescription(), meal.getCalories());
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("id", meal.getId());
+            parameters.put("dateTime", meal.getDateTime());
+            parameters.put("description", meal.getDescription());
+            parameters.put("calories", meal.getCalories());
+            Number id = simpleJdbcInsert.executeAndReturnKey(parameters);
             meal.setId(id.intValue());
             return meal;
         } else {
