@@ -42,8 +42,6 @@ public class JdbcMealRepository implements MealRepository {
     @Override
     public Meal save(Meal meal, int userId) {
         if (meal.isNew()) {
-//            Number id = jdbcTemplate.update("INSERT INTO meals VALUES(1,?,?,?)",
-//                    meal.getDateTime(), meal.getDescription(), meal.getCalories());
             Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put("id", meal.getId());
             parameters.put("dateTime", meal.getDateTime());
