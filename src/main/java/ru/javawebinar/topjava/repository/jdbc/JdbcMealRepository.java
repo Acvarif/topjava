@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.repository.jdbc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
@@ -28,11 +29,11 @@ public class JdbcMealRepository implements MealRepository {
     }
 
     private JdbcTemplate jdbcTemplate;
-//    private SimpleJdbcInsert simpleJdbcInsert;
+    private SimpleJdbcInsert simpleJdbcInsert;
 
     @Autowired
     public JdbcMealRepository(JdbcTemplate jdbcTemplate) {
-//        this.simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("meals").usingGeneratedKeyColumns("id");
+        this.simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("meals").usingGeneratedKeyColumns("id");
         this.jdbcTemplate = jdbcTemplate;
     }
 
