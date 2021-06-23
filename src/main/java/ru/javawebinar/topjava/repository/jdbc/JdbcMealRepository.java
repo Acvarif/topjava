@@ -72,7 +72,7 @@ public class JdbcMealRepository implements MealRepository {
         return meals;
     }
 
-//
+// https://alexkosarev.name/2019/05/04/spring-framework-simple-jdbc-insert/
 
 //    public List<Person> index() {
 //        return jdbcTemplate.query("SELECT * FROM person", new BeanPropertyRowMapper<>(Person.class));
