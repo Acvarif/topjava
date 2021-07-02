@@ -55,6 +55,7 @@ public class JdbcUserRepository implements UserRepository {
         return jdbcTemplate.update("DELETE FROM users WHERE id=?", id) != 0;
     }
 
+
     @Override
     public User get(int id) {
         List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
