@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-@Transactional
 public class JpaMealRepository implements MealRepository {
 
     @PersistenceContext
     private EntityManager em;
 
     @Override
+    @Transactional
     public Meal save(Meal meal, int userId) {
         User ref = em.getReference(User.class, userId);
         meal.setUser(ref);
@@ -31,6 +31,7 @@ public class JpaMealRepository implements MealRepository {
     }
 
     @Override
+    @Transactional
     public boolean delete(int id, int userId) {
         return em.createNamedQuery(Meal.DELETE)
                 .setParameter("id", id)
